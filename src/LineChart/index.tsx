@@ -2943,7 +2943,7 @@ export const LineChart = (props: propTypes) => {
           top: pointerYLocal,
         }}>
         {pointerComponent ? (
-          pointerComponent()
+          pointerComponent({pointerColor:pointerColorLocal})
         ) : (
           <View
             style={{
