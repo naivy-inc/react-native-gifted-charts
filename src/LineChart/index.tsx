@@ -376,6 +376,7 @@ type Pointer = {
   pointerLabelComponent?: Function;
   stripOverPointer?: boolean;
   autoAdjustPointerLabelPosition?: boolean;
+  pointerLabelAvoidStripPosition?: boolean;
   shiftPointerLabelX?: number;
   shiftPointerLabelY?: number;
   pointerLabelWidth?: number;
@@ -1861,6 +1862,7 @@ export const LineChart = (props: propTypes) => {
     pointerLabelWidth: 20,
     pointerLabelHeight: 20,
     autoAdjustPointerLabelPosition: true,
+    pointerLabelAvoidStripPosition: false,
     pointerVanishDelay: 150,
     activatePointersOnLongPress: false,
     activatePointersDelay: 150,
@@ -1941,6 +1943,10 @@ export const LineChart = (props: propTypes) => {
     pointerConfig && pointerConfig.autoAdjustPointerLabelPosition === false
       ? false
       : defaultPointerConfig.autoAdjustPointerLabelPosition;
+  const pointerLabelAvoidStripPosition =
+    pointerConfig && pointerConfig.pointerLabelAvoidStripPosition
+      ? pointerConfig.pointerLabelAvoidStripPosition
+      : defaultPointerConfig.pointerLabelAvoidStripPosition;
   const pointerVanishDelay =
     pointerConfig && pointerConfig.pointerVanishDelay
       ? pointerConfig.pointerVanishDelay
@@ -2986,12 +2992,12 @@ export const LineChart = (props: propTypes) => {
       top = 0;
     if (autoAdjustPointerLabelPosition) {
       if (pointerX < pointerLabelWidth / 2) {
-        left = 7;
+        left = 16;
       } else if (
         activatePointersOnLongPress &&
         pointerX - scrollX < pointerLabelWidth / 2 - 10
-      ) {
-        left = 7;
+        ) {
+          left = 16;
       } else {
         if (
           !activatePointersOnLongPress &&
@@ -3009,8 +3015,16 @@ export const LineChart = (props: propTypes) => {
               pointerLabelWidth / 2
         ) {
           left = -pointerLabelWidth - 4;
-        } else {
-          left = -pointerLabelWidth / 2 + 5;
+        } else if(pointerLabelAvoidStripPosition) {
+          if(pointerX >
+            (props.width ||
+              Dimensions.get('window').width - yAxisLabelWidth - 15) / 2){
+                left = -pointerLabelWidth - 4;
+              }else{
+                left = 16;
+          }
+        }else{
+          left = -pointerLabelWidth / 2 - 5;
         }
       }
     } else {
